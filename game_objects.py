@@ -2,10 +2,11 @@ import pygame as pg
 import math
 
 class Snake:
-    def __init__(self, game, pos):
+    def __init__(self, game, pos, color):
         self.game = game
         self.size = game.TILE_SIZE
         self.segments = []
+        self.color = color
         self.create_snake(pos)
         self.head = self.segments[0]
         self.direction = 'DOWN'
@@ -82,7 +83,7 @@ class Snake:
         self.move()
 
     def draw(self):
-        [pg.draw.rect(self.game.screen, 'green', segment) for segment in self.segments]
+        [pg.draw.rect(self.game.screen, self.color, segment) for segment in self.segments]
 
 
 class Food:
