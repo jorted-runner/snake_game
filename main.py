@@ -1,5 +1,5 @@
 import pygame as pg
-from game_objects import Snake, Food
+from game_objects import Snake, Food, Portal
 import sys
 from random import randrange
 
@@ -29,6 +29,7 @@ class Game:
         self.snake_1 = Snake(self, self.starting_pos[0])
         self.snake_2 = Snake(self, self.starting_pos[1])
         self.food = Food(self)
+        self.portal = Portal(self)
 
     def update(self):
         self.snake_1.update()
@@ -40,6 +41,7 @@ class Game:
         self.draw_grid()
         self.food.draw()
         self.snake_1.draw()
+        self.portal.draw()
 
     def check_event(self):
         for event in pg.event.get():
@@ -47,6 +49,7 @@ class Game:
                 pg.quit()
                 sys.exit()
             self.snake_1.control(event)
+            self.portal.place(event)
 
     def run(self):
         while True:
