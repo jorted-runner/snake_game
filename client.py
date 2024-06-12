@@ -92,7 +92,7 @@ def main():
             for player in p:
                 player.control(event)
             portals.place(event)
-
+        data = n.send((p, food, portals, FPS))
         redrawWindow(screen, p, food, portals, FPS)
 
 main()
