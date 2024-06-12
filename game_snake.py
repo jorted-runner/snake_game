@@ -2,9 +2,8 @@ import pygame as pg
 import math
 
 class Snake:
-    def __init__(self, game, pos, color):
-        self.game = game
-        self.size = game.TILE_SIZE
+    def __init__(self, pos, color):
+        self.size = 20
         self.segments = []
         self.color = color
         self.create_snake(pos)
@@ -47,7 +46,7 @@ class Snake:
                 self.segments[0].center = orange_portal
 
     def add_segment(self, pos):
-        new_segment = pg.rect.Rect([pos[0], pos[1], self.game.TILE_SIZE, self.game.TILE_SIZE])
+        new_segment = pg.rect.Rect([pos[0], pos[1], self.size, self.size])
         self.segments.append(new_segment)
 
     def control(self, event):
