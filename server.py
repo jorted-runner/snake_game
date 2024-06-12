@@ -24,7 +24,7 @@ print('Waiting for a connection, Server Started')
 
 WINDOW_SIZE = 800
 TILE_SIZE = 20
-FPS = 5
+FPS = 2
 snakes = [Snake([(100, 100), (100, 75), (100, 50)], 'green'), Snake([(550, 100), (550, 75), (550, 50)], 'purple')]
 food = Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
 portals = Portal()

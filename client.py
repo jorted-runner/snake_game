@@ -22,14 +22,13 @@ def check_food(food, player, FPS):
     center_food = food.rect.center
     distance = math.sqrt((center_food[0] - center_head[0]) **2 + (center_food[1] - center_head[1]) **2)
     if distance < player.size - 3:
-        # This needs to be done more dynamically
         food.rect.center = food.get_random_position(800, 800, 20)
         FPS *= 1.01
         player.add_segment(player.segments[-1].center)
 
-def check_self_eating(self):
-    if len(self.segments) != len(set(segment.center for segment in self.segments)):
-        self.game.new_game()
+def check_self_eating(player):
+    if len(player.segments) != len(set(segment.center for segment in player.segments)):
+        player.game.new_game()
 
 def check_portal(player, portal):
     if portal.circles['orange']['pos'] and portal.circles['blue']['pos']:
@@ -54,6 +53,7 @@ def redrawWindow(screen, p, food, portals, FPS):
         check_borders(player)
         check_food(food, player, FPS)
         check_portal(player, portals)
+        check_self_eating(player)
     food.draw(screen)
     pygame.display.update()
 
