@@ -31,27 +31,29 @@ def check_self_eating(self):
     if len(self.segments) != len(set(segment.center for segment in self.segments)):
         self.game.new_game()
 
-def check_portal(self):
-    if self.game.portal.circles['orange']['pos'] and self.game.portal.circles['blue']['pos']:
-        center_head = self.segments[0].center
-        orange_portal = self.game.portal.circles['orange']['pos']
+def check_portal(player, portal):
+    if portal.circles['orange']['pos'] and portal.circles['blue']['pos']:
+        center_head = player.segments[0].center
+        orange_portal = portal.circles['orange']['pos']
         orange_distance = math.sqrt((orange_portal[0] - center_head[0]) **2 + (orange_portal[1] - center_head[1]) **2)
-        blue_portal = self.game.portal.circles['blue']['pos']
+        blue_portal = portal.circles['blue']['pos']
         blue_distance = math.sqrt((blue_portal[0] - center_head[0]) **2 + (blue_portal[1] - center_head[1]) **2)
-        if orange_distance < self.size - 5:
-            self.segments[0].center = blue_portal
-        if blue_distance < self.size -5:
-            self.segments[0].center = orange_portal
+        if orange_distance < player.size - 5:
+            player.segments[0].center = blue_portal
+        if blue_distance < player.size -5:
+            player.segments[0].center = orange_portal
 
 
-def redrawWindow(screen, p, food, FPS):
+def redrawWindow(screen, p, food, portals, FPS):
     screen.fill('black')
     draw_grid()
+    portals.draw(screen)
     for player in p:
         player.draw(screen)
         player.move()
         check_borders(player)
         check_food(food, player, FPS)
+        check_portal(player, portals)
     food.draw(screen)
     pygame.display.update()
 
@@ -65,16 +67,18 @@ def main():
     data = n.getP()
     p = data[0]
     food = data[1]
-    FPS = data[2]
+    portals = data[2]
+    FPS = data[3]
     clock = pygame.time.Clock()
     
     while run:
         clock.tick(FPS)
         try:
-            data = n.send((p, food, FPS))
+            data = n.send((p, food, portals, FPS))
             p = data[0]
             food = data[1]
-            FPS = data[2]
+            portals = data[2]
+            FPS = data[3]
 
         except Exception as e:
             run = False
@@ -87,7 +91,8 @@ def main():
                 pygame.quit()
             for player in p:
                 player.control(event)
+            portals.place(event, screen)
 
-        redrawWindow(screen, p, food, FPS)
+        redrawWindow(screen, p, food, portals, FPS)
 
 main()

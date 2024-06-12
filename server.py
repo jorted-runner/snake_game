@@ -4,6 +4,7 @@ from _thread import *
 import os
 from game_snake import Snake
 from game_food import Food
+from game_portals import Portal
 import pickle
 
 load_dotenv()
@@ -26,10 +27,10 @@ TILE_SIZE = 20
 FPS = 5
 snakes = [Snake([(100, 100), (100, 75), (100, 50)], 'green'), Snake([(550, 100), (550, 75), (550, 50)], 'purple')]
 food = Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
+portals = Portal()
 
-def threaded_client(conn, currentPlayer, food):
-    global FPS
-    conn.send(pickle.dumps((snakes, food, FPS)))
+def threaded_client(conn, currentPlayer, food, portals, FPS):
+    conn.send(pickle.dumps((snakes, food, portals, FPS)))
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
@@ -39,9 +40,10 @@ def threaded_client(conn, currentPlayer, food):
 
             snakes[currentPlayer] = data[0][currentPlayer]
             food = data[1]
-            FPS = data[2]
+            portals = data[2]
+            FPS = data[3]
 
-            reply = (snakes, food, FPS)
+            reply = (snakes, food, portals, FPS)
             conn.sendall(pickle.dumps(reply))
 
         except Exception as e:
@@ -57,5 +59,5 @@ while True:
     conn, addr = s.accept()
     print(f'Connected to: {addr}')
 
-    start_new_thread(threaded_client, (conn, currentPlayer, food))
+    start_new_thread(threaded_client, (conn, currentPlayer, food, portals, FPS))
     currentPlayer += 1
