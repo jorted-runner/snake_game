@@ -27,13 +27,13 @@ class Game:
     def new_game(self):
         self.fps = 8
         self.snake_1 = Snake(self, self.starting_pos[0], 'green')
-        self.snake_2 = Snake(self, self.starting_pos[1], 'purple')
+        # self.snake_2 = Snake(self, self.starting_pos[1], 'purple')
         self.food = Food(self)
         self.portal = Portal(self)
 
     def update(self):
         self.snake_1.update()
-        self.snake_2.update()
+        # self.snake_2.update()
         pg.display.flip()
         self.clock.tick(self.fps)
 
@@ -42,7 +42,7 @@ class Game:
         self.draw_grid()
         self.food.draw()
         self.snake_1.draw()
-        self.snake_2.draw()
+        # self.snake_2.draw()
         self.portal.draw()
 
     def check_event(self):
@@ -51,7 +51,7 @@ class Game:
                 pg.quit()
                 sys.exit()
             self.snake_1.control(event)
-            self.snake_2.control(event)
+            # self.snake_2.control(event)
             self.portal.place(event)
 
     def run(self):
