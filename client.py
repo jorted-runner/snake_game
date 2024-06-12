@@ -49,7 +49,7 @@ def redrawWindow(screen, p, food, portals, FPS):
     portals.draw(screen)
     for player in p:
         player.draw(screen)
-        player.move()
+        # player.move()
         check_borders(player)
         check_food(food, player, FPS)
         check_portal(player, portals)
