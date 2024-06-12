@@ -14,19 +14,21 @@ class Snake:
         for pos in positions:
             self.add_segment(pos)
     
+    # will need to fix this logic
     def check_borders(self):
-        if self.segments[0].left < 0 or self.segments[0].right > self.game.WINDOW_SIZE:
-            self.game.new_game()
-        if self.segments[0].top < 0 or self.segments[0].bottom > self.game.WINDOW_SIZE:
-            self.game.new_game()
+        if self.segments[0].left < 0 or self.segments[0].right > 800:
+            pass
+        if self.segments[0].top < 0 or self.segments[0].bottom > 800:
+            pass
 
-    def check_food(self):
+    def check_food(self, food):
         center_head = self.segments[0].center
-        center_food = self.game.food.rect.center
+        center_food = food.rect.center
         distance = math.sqrt((center_food[0] - center_head[0]) **2 + (center_food[1] - center_head[1]) **2)
         if distance < self.size - 3:
-            self.game.food.rect.center = self.game.get_random_position()
-            self.game.fps *= 1.01
+            # This needs to be done more dynamically
+            self.food.rect.center = food.get_random_position(800, 800, 20)
+            # self.game.fps *= 1.01
             self.add_segment(self.segments[-1].center)
 
     def check_self_eating(self):
@@ -74,12 +76,12 @@ class Snake:
         if self.direction == 'DOWN':
             self.segments[0].centery = self.segments[0].centery + self.size
         
-    def update(self):
+    def update(self, screen):
         self.check_self_eating()
         self.check_borders()
-        self.check_food()
-        self.check_portal()
+        # self.check_food(food)
+        # self.check_portal()
         self.move()
 
-    def draw(self):
-        [pg.draw.rect(self.game.screen, self.color, segment) for segment in self.segments]
+    def draw(self, screen):
+        [pg.draw.rect(screen, self.color, segment) for segment in self.segments]
