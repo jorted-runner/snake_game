@@ -91,7 +91,7 @@ def main():
                 pygame.quit()
             for player in p:
                 player.control(event)
-            portals.place(event, screen)
+            portals.place(event)
 
         redrawWindow(screen, p, food, portals, FPS)
 
