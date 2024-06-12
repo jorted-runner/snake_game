@@ -12,10 +12,10 @@ clock = pygame.time.Clock()
 pygame.display.set_caption('client')
 
 def check_borders(player):
-        if player.segments[0].left < 0 or player.segments[0].right > 800:
-            pygame.quit()
-        if player.segments[0].top < 0 or player.segments[0].bottom > 800:
-            pygame.quit()
+    if player.segments[0].left < 0 or player.segments[0].right > 800:
+        pygame.quit()
+    if player.segments[0].top < 0 or player.segments[0].bottom > 800:
+        pygame.quit()
 
 def check_food(food, player, FPS):
     center_head = player.segments[0].center
@@ -49,7 +49,7 @@ def redrawWindow(screen, p, food, portals, FPS):
     portals.draw(screen)
     for player in p:
         player.draw(screen)
-        # player.move()
+        player.move()
         check_borders(player)
         check_food(food, player, FPS)
         check_portal(player, portals)

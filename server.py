@@ -22,9 +22,9 @@ except socket.error as e:
 s.listen(2)
 print('Waiting for a connection, Server Started')
 
-WINDOW_SIZE = 800
+WINDOW_SIZE = 600
 TILE_SIZE = 20
-FPS = 2
+FPS = 7
 snakes = [Snake([(100, 100), (100, 75), (100, 50)], 'green'), Snake([(550, 100), (550, 75), (550, 50)], 'purple')]
 food = Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
 portals = Portal()
