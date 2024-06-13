@@ -24,10 +24,12 @@ print("Waiting for a connection, Server Started")
 WINDOW_SIZE = 600
 TILE_SIZE = 20
 
-# Initialize the game state
-snakes = [Player([(100, 100), (100, 75), (100, 50)], 'green'), Player([(500, 100), (500, 75), (500, 50)], 'purple')]
-food = [Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)]
+class Game:
+    def __init__(self) -> None:
+        snakes = [Player([(100, 100), (100, 75), (100, 50)], 'green'), Player([(500, 100), (500, 75), (500, 50)], 'purple')]
+        food = [Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)]
 
+games = []
 def threaded_client(conn, player_index):
     global snakes, food
     conn.send(pickle.dumps((snakes, food)))
@@ -60,6 +62,6 @@ currentPlayer = 0
 while True:
     conn, addr = s.accept()
     print(f"Connected to: {addr}")
-
+# I want to work on this section so that a new game is created after two people have connected and the game is stored on the server
     start_new_thread(threaded_client, (conn, currentPlayer))
     currentPlayer += 1
