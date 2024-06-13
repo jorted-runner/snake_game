@@ -4,7 +4,7 @@ import math
 from COPY_game import Game
 from game_snake import Snake
 
-WINDOW_SIZE = 800
+WINDOW_SIZE = 600
 TILE_SIZE = 20
 
 screen = pygame.display.set_mode([WINDOW_SIZE] * 2)
@@ -12,9 +12,9 @@ clock = pygame.time.Clock()
 pygame.display.set_caption('client')
 
 def check_borders(player):
-    if player.segments[0].left < 0 or player.segments[0].right > 800:
+    if player.segments[0].left < 0 or player.segments[0].right > 600:
         pygame.quit()
-    if player.segments[0].top < 0 or player.segments[0].bottom > 800:
+    if player.segments[0].top < 0 or player.segments[0].bottom > 600:
         pygame.quit()
 
 def check_food(food, player, FPS):
@@ -22,7 +22,7 @@ def check_food(food, player, FPS):
     center_food = food.rect.center
     distance = math.sqrt((center_food[0] - center_head[0]) **2 + (center_food[1] - center_head[1]) **2)
     if distance < player.size - 3:
-        food.rect.center = food.get_random_position(800, 800, 20)
+        food.rect.center = food.get_random_position(600, 600, 20)
         FPS *= 1.01
         player.add_segment(player.segments[-1].center)
 
