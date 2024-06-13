@@ -26,7 +26,7 @@ TILE_SIZE = 20
 
 # Initialize the game state
 snakes = [Player([(100, 100), (100, 75), (100, 50)], 'green'), Player([(500, 100), (500, 75), (500, 50)], 'purple')]
-food = Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
+food = [Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)]
 
 def threaded_client(conn, player_index):
     global snakes, food
@@ -42,7 +42,7 @@ def threaded_client(conn, player_index):
             snakes[player_index] = data[0][player_index]
             food = data[1]
             if snakes[0].send_food_update or snakes[1].send_food_update:    
-                food.rect.center = food.get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
+                food[0].rect.center = food[0].get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
                 snakes[0].send_food_update = False
                 snakes[1].send_food_update = False
             reply = (snakes, food)

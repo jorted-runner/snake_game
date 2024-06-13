@@ -18,7 +18,7 @@ def check_borders(player):
 
 def check_food(food, player):
     center_head = player.segments[0].center
-    center_food = food.rect.center
+    center_food = food[0].rect.center
     distance = math.sqrt((center_food[0] - center_head[0]) ** 2 + (center_food[1] - center_head[1]) ** 2)
     if distance < player.size - 3:
         player.time_step -= player.time_step * .01
@@ -62,7 +62,7 @@ def redrawWindow(screen, p, food):
             player.send_food_update = True  # Mark food update to be sent to server
         check_self_eating(player)
     check_portal(p)
-    food.draw(screen)
+    food[0].draw(screen)
     pg.display.update()
 
 def draw_grid():
