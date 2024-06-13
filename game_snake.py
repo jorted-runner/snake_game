@@ -53,13 +53,13 @@ class Snake:
 
     def control(self, event):
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_UP:
+            if event.key == pg.K_UP or event.key == pg.K_w:
                 self.direction = 'UP'
-            if event.key == pg.K_DOWN:
+            if event.key == pg.K_DOWN or event.key == pg.K_s:
                 self.direction = 'DOWN'
-            if event.key == pg.K_LEFT:
+            if event.key == pg.K_LEFT or event.key == pg.K_a:
                 self.direction = 'LEFT'
-            if event.key == pg.K_RIGHT:
+            if event.key == pg.K_RIGHT or event.key == pg.K_d:
                 self.direction = 'RIGHT'
     
     def move(self):
