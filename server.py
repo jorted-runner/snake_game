@@ -24,13 +24,13 @@ print('Waiting for a connection, Server Started')
 
 WINDOW_SIZE = 700
 TILE_SIZE = 20
-time, time_step = 0, 200
+
 snakes = [Snake([(100, 100), (100, 75), (100, 50)], 'green'), Snake([(500, 100), (500, 75), (500, 50)], 'purple')]
 food = Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
 portals = Portal()
 
-def threaded_client(conn, currentPlayer, food, portals, time, time_step):
-    conn.send(pickle.dumps((snakes, food, portals, time, time_step)))
+def threaded_client(conn, currentPlayer, food, portals):
+    conn.send(pickle.dumps((snakes, food, portals)))
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
@@ -41,10 +41,8 @@ def threaded_client(conn, currentPlayer, food, portals, time, time_step):
             snakes[currentPlayer] = data[0][currentPlayer]
             food = data[1]
             portals = data[2]
-            time = data[3]
-            time_step = data[4]
 
-            reply = (snakes, food, portals, time, time_step)
+            reply = (snakes, food, portals)
             conn.sendall(pickle.dumps(reply))
 
         except Exception as e:
@@ -60,5 +58,5 @@ while True:
     conn, addr = s.accept()
     print(f'Connected to: {addr}')
 
-    start_new_thread(threaded_client, (conn, currentPlayer, food, portals, time, time_step))
+    start_new_thread(threaded_client, (conn, currentPlayer, food, portals))
     currentPlayer += 1

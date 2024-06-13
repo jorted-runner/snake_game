@@ -4,6 +4,8 @@ import math
 class Snake:
     def __init__(self, pos, color):
         self.size = 20
+        self.time = 0
+        self.time_step = 150
         self.segments = []
         self.color = color
         self.create_snake(pos)

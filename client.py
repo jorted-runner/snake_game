@@ -1,8 +1,6 @@
 import pygame
 from network import Network
 import math
-from COPY_game import Game
-from game_snake import Snake
 
 WINDOW_SIZE = 600
 TILE_SIZE = 20
@@ -17,13 +15,13 @@ def check_borders(player):
     if player.segments[0].top < 0 or player.segments[0].bottom > 600:
         pygame.quit()
 
-def check_food(food, player, time_step):
+def check_food(food, player):
     center_head = player.segments[0].center
     center_food = food.rect.center
     distance = math.sqrt((center_food[0] - center_head[0]) **2 + (center_food[1] - center_head[1]) **2)
     if distance < player.size - 3:
         food.rect.center = food.get_random_position(600, 600, 20)
-        time_step = time_step - (time_step * -1.01)
+        player.time_step -= player.time_step * .01
         player.add_segment(player.segments[-1].center)
 
 def check_self_eating(player):
@@ -43,18 +41,18 @@ def check_portal(player, portal):
             player.segments[0].center = orange_portal
 
 
-def redrawWindow(screen, p, food, portals, time, time_step):
+def redrawWindow(screen, p, food, portals):
     screen.fill('black')
     draw_grid()
     portals.draw(screen)
     for player in p:
         player.draw(screen)
         time_now = pygame.time.get_ticks()
-        if time_now - time > time_step:
-            time = time_now
+        if time_now - player.time > player.time_step:
+            player.time = time_now
             player.move()
         check_borders(player)
-        check_food(food, player, time_step)
+        check_food(food, player)
         check_portal(player, portals)
         check_self_eating(player)
     food.draw(screen)
@@ -71,19 +69,15 @@ def main():
     p = data[0]
     food = data[1]
     portals = data[2]
-    time = data[3]
-    time_step = data[4]
     clock = pygame.time.Clock()
     
     while run:
-        clock.tick(60)
+        clock.tick(120)
         try:
-            data = n.send((p, food, portals, time, time_step))
+            data = n.send((p, food, portals))
             p = data[0]
             food = data[1]
             portals = data[2]
-            time = data[3]
-            time_step = data[4]
 
         except Exception as e:
             run = False
@@ -97,6 +91,6 @@ def main():
             for player in p:
                 player.control(event)
             portals.place(event)
-        redrawWindow(screen, p, food, portals, time, time_step)
+        redrawWindow(screen, p, food, portals)
 
 main()
