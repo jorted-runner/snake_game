@@ -28,7 +28,8 @@ TILE_SIZE = 20
 snakes = [Player([(100, 100), (100, 75), (100, 50)], 'green'), Player([(500, 100), (500, 75), (500, 50)], 'purple')]
 food = Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
 
-def threaded_client(conn, snakes, food, player_index):
+def threaded_client(conn, player_index):
+    global snakes, food
     conn.send(pickle.dumps((snakes, food)))
     reply = ""
     while True:
@@ -40,10 +41,10 @@ def threaded_client(conn, snakes, food, player_index):
 
             snakes[player_index] = data[0][player_index]
             food = data[1]
-            for player in snakes:
-                if player.send_food_update:    
-                    food.rect.center = food.get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
-                    player.send_food_update = False
+            if snakes[0].send_food_update or snakes[1].send_food_update:    
+                food.rect.center = food.get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
+                snakes[0].send_food_update = False
+                snakes[1].send_food_update = False
             reply = (snakes, food)
             conn.sendall(pickle.dumps(reply))
 
@@ -60,5 +61,5 @@ while True:
     conn, addr = s.accept()
     print(f"Connected to: {addr}")
 
-    start_new_thread(threaded_client, (conn, snakes, food, currentPlayer))
+    start_new_thread(threaded_client, (conn, currentPlayer))
     currentPlayer += 1
