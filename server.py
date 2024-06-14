@@ -25,14 +25,19 @@ WINDOW_SIZE = 600
 TILE_SIZE = 20
 
 class Game:
-    def __init__(self) -> None:
-        snakes = [Player([(100, 100), (100, 75), (100, 50)], 'green'), Player([(500, 100), (500, 75), (500, 50)], 'purple')]
-        food = [Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)]
+    def __init__(self, id) -> None:
+        self.id = id
+        self.score = 0
+        self.snakes = [Player([(100, 100), (100, 75), (100, 50)], 'green'), Player([(500, 100), (500, 75), (500, 50)], 'purple')]
+        self.food = [Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)]
 
-games = []
-def threaded_client(conn, player_index):
-    global snakes, food
-    conn.send(pickle.dumps((snakes, food)))
+connected = set()
+games = {}
+idCount = 0
+
+def threaded_client(conn, player_index, game_index):
+    global games
+    conn.send(pickle.dumps((games[game_index].snakes, games[game_index].food)))
     reply = ""
     while True:
         try:
@@ -41,13 +46,13 @@ def threaded_client(conn, player_index):
                 print("Disconnected")
                 break
 
-            snakes[player_index] = data[0][player_index]
-            food = data[1]
-            if snakes[0].send_food_update or snakes[1].send_food_update:    
-                food[0].rect.center = food[0].get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
-                snakes[0].send_food_update = False
-                snakes[1].send_food_update = False
-            reply = (snakes, food)
+            games[game_index].snakes[player_index] = data[0][player_index]
+            games[game_index].food = data[1]
+            if games[game_index].snakes[0].send_food_update or games[game_index].snakes[1].send_food_update:    
+                games[game_index].food[0].rect.center = games[game_index].food[0].get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
+                games[game_index].snakes[0].send_food_update = False
+                games[game_index].snakes[1].send_food_update = False
+            reply = (games[game_index].snakes, games[game_index].food)
             conn.sendall(pickle.dumps(reply))
 
         except Exception as e:
@@ -61,7 +66,18 @@ currentPlayer = 0
 
 while True:
     conn, addr = s.accept()
-    print(f"Connected to: {addr}")
-# I want to work on this section so that a new game is created after two people have connected and the game is stored on the server
-    start_new_thread(threaded_client, (conn, currentPlayer))
-    currentPlayer += 1
+    print(f'Connected to: {addr}')
+
+    idCount += 1
+    p = 0
+
+    gameID = (idCount - 1) //2
+
+    if idCount % 2 == 1:
+        games[gameID] = Game(gameID)
+        print('Creating a new game...')
+    else:
+        games[gameID].ready = True
+        p = 1
+
+    start_new_thread(threaded_client, (conn, p, gameID))

@@ -50,13 +50,18 @@ def check_portal(players):
 def redrawWindow(screen, p, food):
     screen.fill('black')
     draw_grid()
+    time_now = pg.time.get_ticks()
+
+    if time_now - p[0].time > p[0].time_step:
+            p[0].time = time_now
+            p[0].move()
     for player in p:
         player.draw_portal(screen)
         player.draw(screen)
-        time_now = pg.time.get_ticks()
-        if time_now - player.time > player.time_step:
-            player.time = time_now
-            player.move()
+        # time_now = pg.time.get_ticks()
+        # if time_now - player.time > player.time_step:
+        #     player.time = time_now
+        #     player.move()
         check_borders(player)
         if check_food(food, player):
             player.send_food_update = True  # Mark food update to be sent to server
