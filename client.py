@@ -1,6 +1,9 @@
 import pygame as pg
 from network import Network
 import math
+import time
+
+COOL_DOWN_PERIOD = 1.0
 
 WINDOW_SIZE = 600
 TILE_SIZE = 20
@@ -32,6 +35,8 @@ def check_self_eating(player):
             player.game_over()
 
 def check_portal(players):
+    current_time = time.time()
+    
     if players[0].portal['pos'] and players[1].portal['pos']:
         for player in players:
             center_head = player.segments[0].center
@@ -41,10 +46,12 @@ def check_portal(players):
             portal_0_dist = math.sqrt((portal_0[0] - center_head[0]) ** 2 + (portal_0[1] - center_head[1]) ** 2)
             portal_1_dist = math.sqrt((portal_1[0] - center_head[0]) ** 2 + (portal_1[1] - center_head[1]) ** 2)
             
-            if portal_0_dist < player.size:
+            if portal_0_dist < player.size - 3 and (not hasattr(player, 'last_teleport_time') or current_time - player.last_teleport_time >= COOL_DOWN_PERIOD):
                 player.segments[0].center = portal_1  # Teleport to the other portal
-            elif portal_1_dist < player.size:
+                player.last_teleport_time = current_time  # Record the current time as the last teleport time
+            elif portal_1_dist < player.size - 3 and (not hasattr(player, 'last_teleport_time') or current_time - player.last_teleport_time >= COOL_DOWN_PERIOD):
                 player.segments[0].center = portal_0  # Teleport to the other portal
+                player.last_teleport_time = current_time # Record the current time as the last teleport time
 
 def redrawWindow(screen, p, data):
     screen.fill('black')

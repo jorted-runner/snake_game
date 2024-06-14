@@ -17,6 +17,7 @@ class Player:
         }
         self.alive = True
         self.send_food_update  = False
+        self.last_teleport_time = 0
 
     def draw_circle(self, screen, x, y, radius, color):
         pg.draw.circle(screen, color, (x, y), radius)
@@ -30,7 +31,7 @@ class Player:
     def draw_portal(self, screen):
         if self.portal['pos']:
             x, y = self.portal['pos'][0], self.portal['pos'][1]
-            self.draw_circle(screen, x, y, 25 // 2, self.portal['color'])
+            self.draw_circle(screen, x, y, 26 // 2, self.portal['color'])
 
     def create_snake(self, positions):
         for pos in positions:
