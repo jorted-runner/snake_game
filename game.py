@@ -5,7 +5,7 @@ class Game:
     def __init__(self, id) -> None:
         self.id = id
         self.score = 0
-        self.snakes = [Player([(100, 100), (100, 75), (100, 50)], 'green'), Player([(500, 100), (500, 75), (500, 50)], 'purple')]
+        self.snakes = [Player([(100, 100), (100, 80), (100, 60)], 'green'), Player([(500, 100), (500, 80), (500, 60)], 'purple')]
         self.food_size = 20
         self.food_rect = pygame.rect.Rect([0, 0, self.food_size, self.food_size])
         self.food_rect.center = self.get_random_position(600, 600, 20)

@@ -28,11 +28,13 @@ def check_food(data, player):
         return True  # Return True if food is eaten
     return False
 
-def check_self_eating(player):
-    head_pos = player.segments[0].center
-    for segment in player.segments[1:]:
-        if segment.center == head_pos:
-            player.game_over()
+def check_self_eating(game, players):
+    p1_head_pos = players[0].segments[0].center
+    p2_head_pos = players[1].segments[0].center
+    for player in players:
+        for segment in player.segments[1:]:
+            if segment.center == p1_head_pos or segment.center == p2_head_pos or p2_head_pos == p1_head_pos:
+                game.game_over()
 
 def check_portal(players):
     current_time = time.time()
@@ -55,7 +57,6 @@ def check_portal(players):
 
 def redrawWindow(screen, p, data):
     screen.fill('black')
-    draw_grid()
     time_now = pg.time.get_ticks()
     if time_now - p[0].time > p[0].time_step:
         p[0].time = time_now
@@ -67,17 +68,11 @@ def redrawWindow(screen, p, data):
         # if time_now - player.time > player.time_step:
         #     player.time = time_now
         #     player.move()
-        check_borders(player)
         if check_food(data, player):
             player.send_food_update = True  # Mark food update to be sent to server
-        check_self_eating(player)
     check_portal(p)
     data.draw_food(screen)
     pg.display.update()
-
-def draw_grid():
-    [pg.draw.line(screen, [50] * 3, (x, 0), (x, WINDOW_SIZE)) for x in range(0, WINDOW_SIZE, TILE_SIZE)]
-    [pg.draw.line(screen, [50] * 3, (0, y), (WINDOW_SIZE, y)) for y in range(0, WINDOW_SIZE, TILE_SIZE)]
 
 def main():
     run = True
@@ -109,7 +104,7 @@ def main():
         for player in p:
             if player.alive:
                 check_borders(player)
-                check_self_eating(player)
+        check_self_eating(data, p)
 
         redrawWindow(screen, p, data)
 
