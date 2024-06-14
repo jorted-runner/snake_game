@@ -20,7 +20,7 @@ def check_food(data, player):
     center_food = data.food_rect.center
     distance = math.sqrt((center_food[0] - center_head[0]) ** 2 + (center_food[1] - center_head[1]) ** 2)
     if distance < player.size - 3:
-        player.time_step -= player.time_step * .01
+        player.time_step -= player.time_step * .0125
         player.add_segment(player.segments[-1].center)
         return True  # Return True if food is eaten
     return False
@@ -41,9 +41,9 @@ def check_portal(players):
             portal_0_dist = math.sqrt((portal_0[0] - center_head[0]) ** 2 + (portal_0[1] - center_head[1]) ** 2)
             portal_1_dist = math.sqrt((portal_1[0] - center_head[0]) ** 2 + (portal_1[1] - center_head[1]) ** 2)
             
-            if portal_0_dist < player.size - 5:
+            if portal_0_dist < player.size:
                 player.segments[0].center = portal_1  # Teleport to the other portal
-            elif portal_1_dist < player.size - 5:
+            elif portal_1_dist < player.size:
                 player.segments[0].center = portal_0  # Teleport to the other portal
 
 def redrawWindow(screen, p, data):

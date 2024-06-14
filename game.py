@@ -13,8 +13,8 @@ class Game:
         self.food_position = self.get_random_position(600, 600, 20)
 
     def get_random_position(self, screen_width, screen_height, tile_size):
-        x = random.randint(0, (screen_width // tile_size) - 1) * tile_size
-        y = random.randint(0, (screen_height // tile_size) - 1) * tile_size
+        x = random.randint(0+tile_size/2, screen_width - tile_size/2)
+        y = random.randint(0+tile_size/2, screen_width - tile_size/2)
         return (x, y)
 
     def draw_food(self, screen):
