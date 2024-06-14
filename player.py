@@ -30,7 +30,7 @@ class Player:
     def draw_portal(self, screen):
         if self.portal['pos']:
             x, y = self.portal['pos'][0], self.portal['pos'][1]
-            self.draw_circle(screen, x, y, 30 // 2, self.portal['color'])
+            self.draw_circle(screen, x, y, 25 // 2, self.portal['color'])
 
     def create_snake(self, positions):
         for pos in positions:
