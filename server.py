@@ -2,9 +2,8 @@ from dotenv import load_dotenv
 import socket
 from _thread import *
 import os
-from game_food import Food
-from player import Player
 import pickle
+from game import Game
 
 load_dotenv()
 
@@ -24,20 +23,14 @@ print("Waiting for a connection, Server Started")
 WINDOW_SIZE = 600
 TILE_SIZE = 20
 
-class Game:
-    def __init__(self, id) -> None:
-        self.id = id
-        self.score = 0
-        self.snakes = [Player([(100, 100), (100, 75), (100, 50)], 'green'), Player([(500, 100), (500, 75), (500, 50)], 'purple')]
-        self.food = [Food(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)]
+
 
 connected = set()
 games = {}
 idCount = 0
 
 def threaded_client(conn, player_index, game_index):
-    global games
-    conn.send(pickle.dumps((games[game_index].snakes, games[game_index].food)))
+    conn.send(pickle.dumps((games[game_index])))
     reply = ""
     while True:
         try:
@@ -46,13 +39,12 @@ def threaded_client(conn, player_index, game_index):
                 print("Disconnected")
                 break
 
-            games[game_index].snakes[player_index] = data[0][player_index]
-            games[game_index].food = data[1]
+            games[game_index].snakes[player_index] = data.snakes[player_index]
             if games[game_index].snakes[0].send_food_update or games[game_index].snakes[1].send_food_update:    
-                games[game_index].food[0].rect.center = games[game_index].food[0].get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
+                games[game_index].food_rect.center = games[game_index].get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
                 games[game_index].snakes[0].send_food_update = False
                 games[game_index].snakes[1].send_food_update = False
-            reply = (games[game_index].snakes, games[game_index].food)
+            reply = (games[game_index])
             conn.sendall(pickle.dumps(reply))
 
         except Exception as e:

@@ -68,11 +68,3 @@ class Player:
 
     def draw(self, screen):
         [pg.draw.rect(screen, self.color, segment) for segment in self.segments]
-
-    def reset(self):
-        # Logic to reset the snake to its initial state
-        self.__init__(self.initial_position, self.color)
-
-    def game_over(self):
-        self.alive = False
-        self.reset()
