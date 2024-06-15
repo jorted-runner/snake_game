@@ -57,6 +57,7 @@ def check_portal(players):
 
 def redrawWindow(screen, p, data):
     screen.fill('black')
+    data.draw_score(screen)
     # time_now = pg.time.get_ticks()
     # if time_now - p[0].time > p[0].time_step:
     #     p[0].time = time_now

@@ -23,8 +23,6 @@ print("Waiting for a connection, Server Started")
 WINDOW_SIZE = 600
 TILE_SIZE = 20
 
-
-
 connected = set()
 games = {}
 idCount = 0
@@ -63,7 +61,7 @@ while True:
     idCount += 1
     p = 0
 
-    gameID = (idCount - 1) //2
+    gameID = (idCount - 1) // 2
 
     if idCount % 2 == 1:
         games[gameID] = Game(gameID)

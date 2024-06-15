@@ -1,8 +1,10 @@
 from player import Player
 import pygame
 import random
+
 class Game:
     def __init__(self, id) -> None:
+        self.ready = False
         self.id = id
         self.score = 0
         self.snakes = [Player([(100, 100), (100, 80), (100, 60)], 'green'), Player([(500, 100), (500, 80), (500, 60)], 'purple')]
@@ -17,6 +19,11 @@ class Game:
         y = random.randint(0+tile_size/2, screen_width - tile_size/2)
         return (x, y)
 
+    def draw_score(self, screen):
+        font = pygame.font.Font(None, 36)
+        text = font.render(f"Score {self.score}", 1, (10, 10, 10))
+        screen.blit(text, (10,10))
+        
     def draw_food(self, screen):
         pygame.draw.rect(screen, self.food_color, self.food_rect)
 
