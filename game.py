@@ -53,6 +53,10 @@ class Game:
     def update_position(self, screen_width, screen_height, tile_size):
         self.food_position = self.get_random_position(screen_width, screen_height, tile_size)
 
+    def connected(self):
+        if self.snakes[0].ready and self.snakes[1].ready:
+            return self.ready
+    
     def reset(self):
         print("Resetting game...")
         self.__init__(self.id)

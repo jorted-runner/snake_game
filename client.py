@@ -26,7 +26,6 @@ def check_self_eating(players):
             if segment.center == p1_head_pos or segment.center == p2_head_pos or p2_head_pos == p1_head_pos:
                 return True
                 
-
 def check_portal(players):
     current_time = time.time()
     if players[0].portal['pos'] and players[1].portal['pos']:
@@ -45,10 +44,14 @@ def check_portal(players):
                 player.segments[0].center = portal_0  # Teleport to the other portal
                 player.last_teleport_time = current_time # Record the current time as the last teleport time
 
-def redrawWindow(screen, p, data):
+def redrawWindow(screen, data):
     screen.fill('black')
+    if not(data.connected()):
+        font = pg.font.SysFont('comicsans', 80)
+        text = font.render('Waiting for player', 1, (255,0,0), True)
+        screen.blit(text, (WINDOW_SIZE/2 - text.get_width()/2, WINDOW_SIZE/2 - text.get_height()/2))
     data.draw_score(screen)
-    for player in p:
+    for player in data.snakes:
         player.draw_portal(screen)
         player.draw(screen)
         time_now = pg.time.get_ticks()
@@ -57,22 +60,44 @@ def redrawWindow(screen, p, data):
             player.move()
         if data.check_food(data, player):
             player.send_food_update = True  # Mark food update to be sent to server
-    check_portal(p)
+    check_portal(data.snakes)
     data.draw_food(screen)
     pg.display.update()
+
+def menu_screen():
+    if not pg.font.get_init():
+        pg.font.init()
+    run = True
+    clock = pg.time.Clock()
+    while run:
+        clock.tick(60)
+        screen.fill((128,128,128))
+
+        font = pg.font.SysFont('comicsans', 60)
+        text = font.render('Click to Play!', 1, (255,0,0))
+        screen.blit(text, (100,200))
+        pg.display.update()
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                run = False
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                run = False
+    main()
 
 def main():
     run = True
     n = Network()
     data = n.getP()
-    p = data.snakes
+    print(data)
+    game = data[0]
+    p_index = data[1]
     clock = pg.time.Clock()
-    
+    game.snakes[p_index].ready = True
     while run:
         clock.tick(60)
         try:
             data = n.send((data))
-            p = data.snakes
 
         except Exception as e:
             run = False
@@ -83,20 +108,22 @@ def main():
             if event.type == pg.QUIT:
                 run = False
                 pg.quit()
-            for player in p:
+            for player in data.snakes:
                 if player.alive:
                     player.control(event)
                     player.place_portal(event)
 
-        for player in p:
+        for player in data.snakes:
             if player.alive:
                 if check_borders(player):
                     player.alive = False
-        if check_self_eating(p):
-            for player in p:
+
+        if check_self_eating(game.snakes):
+            for player in game.snakes:
                 player.alive = False
 
-        redrawWindow(screen, p, data)
+        redrawWindow(screen, data)
 
 if __name__ == "__main__":
-    main()
+    while True:
+        menu_screen()

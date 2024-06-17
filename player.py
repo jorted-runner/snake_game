@@ -17,6 +17,7 @@ class Player:
         self.alive = True
         self.send_food_update  = False
         self.last_teleport_time = 0
+        self.ready = False
 
     def draw_circle(self, screen, x, y, radius, color):
         pg.draw.circle(screen, color, (x, y), radius)

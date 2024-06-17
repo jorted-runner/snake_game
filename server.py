@@ -28,7 +28,7 @@ games = {}
 idCount = 0
 
 def threaded_client(conn, player_index, game_index):
-    conn.send(pickle.dumps((games[game_index])))
+    conn.send(pickle.dumps(games[game_index], player_index))
     reply = ""
     while True:
         try:
@@ -46,7 +46,7 @@ def threaded_client(conn, player_index, game_index):
             if games[game_index].snakes[player_index].alive == False:
                 games[game_index].score = 0
                 games[game_index].game_over()
-            reply = (games[game_index])
+            reply = (games[game_index], player_index)
             conn.sendall(pickle.dumps(reply))
 
         except Exception as e:
@@ -71,7 +71,6 @@ while True:
         games[gameID] = Game(gameID)
         print('Creating a new game...')
     else:
-        games[gameID].ready = True
         p = 1
 
     start_new_thread(threaded_client, (conn, p, gameID))
