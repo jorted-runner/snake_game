@@ -5,7 +5,6 @@ from player import Player
 
 class Game:
     def __init__(self, id):
-        self.ready = False
         self.id = id
         self.score = 0
         self.snakes = [
@@ -54,12 +53,13 @@ class Game:
 
     def connected(self):
         if self.snakes[0].ready and self.snakes[1].ready:
-            self.ready = True
-            return self.ready
+            return True
     
     def reset(self):
         print("Resetting game...")
         self.__init__(self.id)
+        for snake in self.snakes:
+            snake.ready = False
 
     def game_over(self):
         print("Game over!")
