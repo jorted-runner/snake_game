@@ -42,11 +42,6 @@ class Game:
         text = font.render(f"Score {self.score}", True, (255, 255, 255))
         screen.blit(text, (10, 10))
 
-    def update_score(self):
-        print(f"Updating score from {self.score}")
-        self.score += 1
-        print(f"Updated score to {self.score}")
-
     def draw_food(self, screen):
         pygame.draw.rect(screen, self.food_color, self.food_rect)
 
@@ -56,7 +51,6 @@ class Game:
     def reset(self):
         print("Resetting game...")
         self.__init__(self.id)
-        self.score = 0
 
     def game_over(self):
         print("Game over!")
