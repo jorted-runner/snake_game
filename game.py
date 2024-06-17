@@ -5,7 +5,6 @@ from player import Player
 
 class Game:
     def __init__(self, id):
-        print(f"Initializing game with id: {id}")
         self.ready = False
         self.id = id
         self.score = 0
@@ -55,6 +54,7 @@ class Game:
 
     def connected(self):
         if self.snakes[0].ready and self.snakes[1].ready:
+            self.ready = True
             return self.ready
     
     def reset(self):

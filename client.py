@@ -47,21 +47,22 @@ def check_portal(players):
 def redrawWindow(screen, game):
     screen.fill('black')
     if not(game.connected()):
-        font = pg.font.SysFont('comicsans', 80)
+        font = pg.font.SysFont('comicsans', 60)
         text = font.render('Waiting for player', 1, (255,0,0), True)
         screen.blit(text, (WINDOW_SIZE/2 - text.get_width()/2, WINDOW_SIZE/2 - text.get_height()/2))
-    game.draw_score(screen)
-    for player in game.snakes:
-        player.draw_portal(screen)
-        player.draw(screen)
-        time_now = pg.time.get_ticks()
-        if time_now - player.time > player.time_step:
-            player.time = time_now
-            player.move()
-        if game.check_food(game, player):
-            player.send_food_update = True  # Mark food update to be sent to server
-    check_portal(game.snakes)
-    game.draw_food(screen)
+    else:
+        game.draw_score(screen)
+        for player in game.snakes:
+            player.draw_portal(screen)
+            player.draw(screen)
+            time_now = pg.time.get_ticks()
+            if time_now - player.time > player.time_step:
+                player.time = time_now
+                player.move()
+            if game.check_food(game, player):
+                player.send_food_update = True  # Mark food update to be sent to server
+        check_portal(game.snakes)
+        game.draw_food(screen)
     pg.display.update()
 
 def menu_screen():
@@ -89,7 +90,6 @@ def main():
     run = True
     n = Network()
     data = n.getP()
-    print(data)
     game = data[0]
     p_index = data[1]
     clock = pg.time.Clock()
@@ -108,12 +108,11 @@ def main():
             if event.type == pg.QUIT:
                 run = False
                 pg.quit()
-            for player in data.snakes:
-                if player.alive:
-                    player.control(event)
-                    player.place_portal(event)
+            if game.snakes[p_index].alive:
+                game.snakes[p_index].control(event)
+                game.snakes[p_index].place_portal(event)
 
-        for player in data.snakes:
+        for player in game.snakes:
             if player.alive:
                 if check_borders(player):
                     player.alive = False
