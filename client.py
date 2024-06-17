@@ -12,23 +12,23 @@ screen = pg.display.set_mode([WINDOW_SIZE] * 2)
 clock = pg.time.Clock()
 pg.display.set_caption('client')
 
-def check_borders(game, player):
+def check_borders(player):
     if player.segments[0].left < 0 or player.segments[0].right > WINDOW_SIZE:
-        game.game_over()
+        return True
     if player.segments[0].top < 0 or player.segments[0].bottom > WINDOW_SIZE:
-        game.game_over()
+        return True
 
-def check_self_eating(game, players):
+def check_self_eating(players):
     p1_head_pos = players[0].segments[0].center
     p2_head_pos = players[1].segments[0].center
     for player in players:
         for segment in player.segments[1:]:
             if segment.center == p1_head_pos or segment.center == p2_head_pos or p2_head_pos == p1_head_pos:
-                game.game_over()
+                return True
+                
 
 def check_portal(players):
     current_time = time.time()
-    
     if players[0].portal['pos'] and players[1].portal['pos']:
         for player in players:
             center_head = player.segments[0].center
@@ -90,8 +90,11 @@ def main():
 
         for player in p:
             if player.alive:
-                check_borders(data, player)
-        check_self_eating(data, p)
+                if check_borders(player):
+                    player.alive = False
+        if check_self_eating(p):
+            for player in p:
+                player.alive = False
 
         redrawWindow(screen, p, data)
 

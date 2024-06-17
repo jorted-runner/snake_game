@@ -6,7 +6,6 @@ from player import Player
 class Game:
     def __init__(self, id):
         print(f"Initializing game with id: {id}")
-        self.alive = True
         self.ready = False
         self.id = id
         self.score = 0
@@ -34,6 +33,12 @@ class Game:
             player.add_segment(player.segments[-1].center)
             return True  # Return True if food is eaten
         return False
+
+    def update_score(self):
+        self.score += 1
+
+    def update_alive(self):
+        self.alive = False
 
     def draw_score(self, screen):
         if not pygame.font.get_init():
