@@ -44,24 +44,24 @@ def check_portal(players):
                 player.segments[0].center = portal_0  # Teleport to the other portal
                 player.last_teleport_time = current_time # Record the current time as the last teleport time
 
-def redrawWindow(screen, data):
+def redrawWindow(screen, game):
     screen.fill('black')
-    if not(data.connected()):
+    if not(game.connected()):
         font = pg.font.SysFont('comicsans', 80)
         text = font.render('Waiting for player', 1, (255,0,0), True)
         screen.blit(text, (WINDOW_SIZE/2 - text.get_width()/2, WINDOW_SIZE/2 - text.get_height()/2))
-    data.draw_score(screen)
-    for player in data.snakes:
+    game.draw_score(screen)
+    for player in game.snakes:
         player.draw_portal(screen)
         player.draw(screen)
         time_now = pg.time.get_ticks()
         if time_now - player.time > player.time_step:
             player.time = time_now
             player.move()
-        if data.check_food(data, player):
+        if game.check_food(game, player):
             player.send_food_update = True  # Mark food update to be sent to server
-    check_portal(data.snakes)
-    data.draw_food(screen)
+    check_portal(game.snakes)
+    game.draw_food(screen)
     pg.display.update()
 
 def menu_screen():
@@ -97,7 +97,7 @@ def main():
     while run:
         clock.tick(60)
         try:
-            data = n.send((data))
+            data = n.send((game, p_index))
 
         except Exception as e:
             run = False
@@ -122,7 +122,7 @@ def main():
             for player in game.snakes:
                 player.alive = False
 
-        redrawWindow(screen, data)
+        redrawWindow(screen, game)
 
 if __name__ == "__main__":
     while True:
