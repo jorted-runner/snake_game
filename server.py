@@ -7,8 +7,8 @@ from game import Game
 
 load_dotenv()
 
-server = os.environ.get('IP_ADDRESS')
-port = int(os.environ.get('PORT'))
+server = os.getenv('IP_ADDRESS')
+port = int(os.getenv('PORT'))
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -25,22 +25,28 @@ games = {}
 idCount = 0
 
 def threaded_client(conn, player_index, game_index):
-    conn.send(pickle.dumps((games[game_index], player_index)))
+    global idCount
+    conn.send(pickle.dumps(games[game_index], player_index))
     while True:
         try:
-            data = pickle.loads(conn.recv(2048))
-            game = data[0]
-            games[game_index] = game
+            data = conn.recv(4096)
             if not data:
-                print("Disconnected")
+                print("No data received. Client might have disconnected.")
                 break
-            conn.sendall(pickle.dumps(games[game_index], player_index))
+
+            game_data = pickle.loads(data)
+            games[game_index] = game_data
+
+            # Send updated game state to all connected clients
+            for c in connected:
+                c.sendall(pickle.dumps(games[game_index], player_index))
 
         except Exception as e:
             print(f"Error: {e}")
             break
 
     print("Lost connection")
+    connected.remove(conn)
     conn.close()
 
 currentPlayer = 0
@@ -48,6 +54,7 @@ currentPlayer = 0
 while True:
     conn, addr = s.accept()
     print(f'Connected to: {addr}')
+    connected.add(conn)
 
     idCount += 1
     p = 0
