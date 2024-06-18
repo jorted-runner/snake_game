@@ -53,13 +53,11 @@ def main():
     run = True
     n = Network()
     game_data = n.getP()
-    print(game_data)
-
     game = game_data[0]  # Extract the game object
     p_index = game_data[1]  # Extract the player index
     clock = pg.time.Clock()
     game.snakes[p_index].mark_ready()
-    n.send(game, p_index)  # Notify the server that this player is ready
+    n.send((game, p_index))  # Notify the server that this player is ready
 
     while run:
         game_data = n.getP()
@@ -77,7 +75,7 @@ def main():
             game.check_borders()
             game.check_self_eating()
             redrawWindow(screen, game)
-            n.send(game, p_index)
+            n.send((game, p_index))
         else:
             redrawWindow(screen, game)
 

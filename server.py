@@ -25,8 +25,7 @@ games = {}
 idCount = 0
 
 def threaded_client(conn, player_index, game_index):
-    global idCount
-    conn.send(pickle.dumps(games[game_index], player_index))
+    conn.send(pickle.dumps((games[game_index], player_index)))
     while True:
         try:
             data = conn.recv(4096)
@@ -35,11 +34,11 @@ def threaded_client(conn, player_index, game_index):
                 break
 
             game_data = pickle.loads(data)
-            games[game_index] = game_data
+            games[game_index] = game_data[0]
 
             # Send updated game state to all connected clients
             for c in connected:
-                c.sendall(pickle.dumps(games[game_index], player_index))
+                c.sendall(pickle.dumps((games[game_index], None)))
 
         except Exception as e:
             print(f"Error: {e}")
