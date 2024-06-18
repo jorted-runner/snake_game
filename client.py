@@ -1,9 +1,5 @@
-import pygame as pg
 from network import Network
-import math
-import time
-
-COOL_DOWN_PERIOD = 1.0
+import pygame as pg
 
 WINDOW_SIZE = 600
 TILE_SIZE = 20
@@ -11,39 +7,7 @@ TILE_SIZE = 20
 screen = pg.display.set_mode([WINDOW_SIZE] * 2)
 clock = pg.time.Clock()
 pg.display.set_caption('client')
-
-def check_borders(player):
-    if player.segments[0].left < 0 or player.segments[0].right > WINDOW_SIZE:
-        return True
-    if player.segments[0].top < 0 or player.segments[0].bottom > WINDOW_SIZE:
-        return True
-
-def check_self_eating(players):
-    p1_head_pos = players[0].segments[0].center
-    p2_head_pos = players[1].segments[0].center
-    for player in players:
-        for segment in player.segments[1:]:
-            if segment.center == p1_head_pos or segment.center == p2_head_pos or p2_head_pos == p1_head_pos:
-                return True
                 
-def check_portal(players):
-    current_time = time.time()
-    if players[0].portal['pos'] and players[1].portal['pos']:
-        for player in players:
-            center_head = player.segments[0].center
-            portal_0 = players[0].portal['pos']
-            portal_1 = players[1].portal['pos']
-            
-            portal_0_dist = math.sqrt((portal_0[0] - center_head[0]) ** 2 + (portal_0[1] - center_head[1]) ** 2)
-            portal_1_dist = math.sqrt((portal_1[0] - center_head[0]) ** 2 + (portal_1[1] - center_head[1]) ** 2)
-            
-            if portal_0_dist < player.size - 3 and (not hasattr(player, 'last_teleport_time') or current_time - player.last_teleport_time >= COOL_DOWN_PERIOD):
-                player.segments[0].center = portal_1  # Teleport to the other portal
-                player.last_teleport_time = current_time  # Record the current time as the last teleport time
-            elif portal_1_dist < player.size - 3 and (not hasattr(player, 'last_teleport_time') or current_time - player.last_teleport_time >= COOL_DOWN_PERIOD):
-                player.segments[0].center = portal_0  # Teleport to the other portal
-                player.last_teleport_time = current_time # Record the current time as the last teleport time
-
 def redrawWindow(screen, game):
     screen.fill('black')
     if not(game.connected()):
@@ -59,10 +23,9 @@ def redrawWindow(screen, game):
             if time_now - player.time > player.time_step:
                 player.time = time_now
                 player.move()
-            if game.check_food(game, player):
-                player.send_food_update = True  # Mark food update to be sent to server
-        check_portal(game.snakes)
-        game.draw_food(screen)
+            game.check_food(player)
+        game.check_portal()
+        game.food.draw_food(screen)
     pg.display.update()
 
 def menu_screen():
@@ -72,7 +35,7 @@ def menu_screen():
     clock = pg.time.Clock()
     while run:
         clock.tick(60)
-        screen.fill((128,128,128))
+        screen.fill('black')
 
         font = pg.font.SysFont('comicsans', 60)
         text = font.render('Click to Play!', 1, (255,0,0))
@@ -96,31 +59,16 @@ def main():
     game.snakes[p_index].ready = True
     while run:
         clock.tick(60)
-        try:
-            data = n.send((game, p_index))
-
-        except Exception as e:
-            run = False
-            print(f"Couldn't get game: {e}")
-            break
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
                 pg.quit()
-            if game.snakes[p_index].alive:
-                game.snakes[p_index].control(event)
-                game.snakes[p_index].place_portal(event)
+            game.snakes[p_index].control(event)
+            game.snakes[p_index].place_portal(event)
 
-        for player in game.snakes:
-            if player.alive:
-                if check_borders(player):
-                    player.alive = False
-
-        if check_self_eating(game.snakes):
-            for player in game.snakes:
-                player.alive = False
-
+        game.check_borders()
+        game.check_self_eating()
         redrawWindow(screen, game)
 
 if __name__ == "__main__":

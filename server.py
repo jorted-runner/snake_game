@@ -36,16 +36,6 @@ def threaded_client(conn, player_index, game_index):
             if not data:
                 print("Disconnected")
                 break
-
-            games[game_index].snakes[player_index] = data[0].snakes[player_index]
-            if games[game_index].snakes[0].send_food_update or games[game_index].snakes[1].send_food_update:
-                games[game_index].update_score()  
-                games[game_index].food_rect.center = games[game_index].get_random_position(WINDOW_SIZE, WINDOW_SIZE, TILE_SIZE)
-                games[game_index].snakes[0].send_food_update = False
-                games[game_index].snakes[1].send_food_update = False
-            if games[game_index].snakes[player_index].alive == False:
-                games[game_index].score = 0
-                games[game_index].game_over()
             reply = (games[game_index], player_index)
             conn.sendall(pickle.dumps(reply))
 
