@@ -66,9 +66,8 @@ class Game:
         screen.blit(text, (10, 10))
 
     def connected(self):
-        # if self.snakes[0].ready and self.snakes[1].ready:
-        #     return True
-        return True
+        if self.snakes[0].ready and self.snakes[1].ready:
+            return True
         
     def check_borders(self):
         # Checks if players head is hitting either side of the window then either top or bottom
