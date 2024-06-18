@@ -20,9 +20,6 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for a connection, Server Started")
 
-WINDOW_SIZE = 600
-TILE_SIZE = 20
-
 connected = set()
 games = {}
 idCount = 0
