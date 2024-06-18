@@ -14,7 +14,6 @@ class Player:
                 'color': color,
                 'pos': [] 
         }
-        self.alive = True
         self.send_food_update  = False
         self.last_teleport_time = 0
         self.ready = False
