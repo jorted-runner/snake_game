@@ -29,7 +29,6 @@ idCount = 0
 
 def threaded_client(conn, player_index, game_index):
     conn.send(pickle.dumps((games[game_index], player_index)))
-    reply = ""
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
