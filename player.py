@@ -69,3 +69,6 @@ class Player:
 
     def draw(self, screen):
         [pg.draw.rect(screen, self.color, segment) for segment in self.segments]
+
+    def mark_ready(self):
+        self.ready = True

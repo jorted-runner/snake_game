@@ -84,7 +84,6 @@ class Game:
                     self.game_over()
 
     def reset(self):
-
         print("Resetting game...")
         self.__init__(self.id)
         for snake in self.snakes:

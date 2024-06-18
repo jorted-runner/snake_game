@@ -56,10 +56,12 @@ def main():
     game = data[0]
     p_index = data[1]
     clock = pg.time.Clock()
-    game.snakes[p_index].ready = True
+    game.snakes[p_index].mark_ready()
     while run:
+        data = n.getP()
+        game = data[0]
+        p_index = data[1]
         clock.tick(60)
-
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
@@ -70,6 +72,8 @@ def main():
         game.check_borders()
         game.check_self_eating()
         redrawWindow(screen, game)
+        data = n.send((game, p_index))
+
 
 if __name__ == "__main__":
     while True:
