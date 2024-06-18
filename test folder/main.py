@@ -1,8 +1,7 @@
 from game import Game
+import pygame as pg
 
 game = Game(1)
-
-import pygame as pg
 
 WINDOW_SIZE = 600
 TILE_SIZE = 20
