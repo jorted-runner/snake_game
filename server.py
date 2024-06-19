@@ -20,13 +20,11 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for a connection, Server Started")
 
-connected_clients = {}
-connected = set()
+connected_clients = set()
 games = {}
 idCount = 0
 
 def threaded_client(conn, player_index, game_index):
-    print(f'Thread started for Player {player_index} in Game {game_index}')
     try:
         conn.sendall(pickle.dumps((games[game_index], player_index)))
         while True:
@@ -37,7 +35,13 @@ def threaded_client(conn, player_index, game_index):
 
             game_data = pickle.loads(data)
             games[game_index] = game_data[0]
-            conn.sendall(pickle.dumps((games[game_index], player_index)))
+            
+            # Send updated game state to all connected clients
+            for client_conn in connected_clients:
+                try:
+                    client_conn.sendall(pickle.dumps((games[game_index], player_index)))
+                except Exception as e:
+                    print(f"Error sending data to client: {e}")
     except pickle.UnpicklingError as e:
         print(f"Error unpickling data: {e}")
     except socket.error as e:
@@ -46,16 +50,14 @@ def threaded_client(conn, player_index, game_index):
         print(f"Error in thread for Player {player_index}: {e}")
     finally:
         print(f"Lost connection from Player {player_index}")
-        connected.discard(conn)
+        connected_clients.discard(conn)
         conn.close()
+
 
 while True:
     conn, addr = s.accept()
     
-    if conn in connected:
-        conn.close()
-    else:
-        connected.add(conn)
+    connected_clients.add(conn)
 
     idCount += 1
     player_index = 0
