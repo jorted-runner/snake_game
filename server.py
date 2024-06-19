@@ -25,7 +25,7 @@ connected = set()
 games = {}
 idCount = 0
 
-def threaded_client(conn, player_index, game_index, client_id):
+def threaded_client(conn, player_index, game_index):
     print(f'Thread started for Player {player_index} in Game {game_index}')
     try:
         conn.sendall(pickle.dumps((games[game_index], player_index)))
@@ -38,10 +38,7 @@ def threaded_client(conn, player_index, game_index, client_id):
             game_data = pickle.loads(data)
             games[game_index] = game_data[0]
 
-            # Send updated game state to all connected clients
-            for client_conn, _ in connected_clients.values():
-                client_conn.sendall(pickle.dumps((games[game_index], player_index)))
-
+            conn.sendall(pickle.dumps((games[game_index], player_index)))
     except pickle.UnpicklingError as e:
         print(f"Error unpickling data: {e}")
     except socket.error as e:
@@ -50,29 +47,26 @@ def threaded_client(conn, player_index, game_index, client_id):
         print(f"Error in thread for Player {player_index}: {e}")
     finally:
         print(f"Lost connection from Player {player_index}")
-        del connected_clients[client_id]
+        connected.discard(conn)
         conn.close()
 
 while True:
     conn, addr = s.accept()
-    print(f'Connected to: {addr}')
-
-    client_id = addr  # Using address as a unique identifier
-    if client_id in connected_clients:
-        print(f"Client {client_id} is already connected. Ignoring this connection.")
+    
+    if conn in connected:
         conn.close()
-        continue
+    else:
+        connected.add(conn)
 
     idCount += 1
     player_index = 0
     gameID = (idCount - 1) // 2
 
     if idCount % 2 == 1:
-        games[gameID] = Game(gameID)  # Ensure Game objects are properly initialized and pickleable
+        games[gameID] = Game(gameID)
         print('Creating a new game...')
     else:
         player_index = 1
 
-    connected_clients[client_id] = (conn, player_index)
     print(f'Game Index: {gameID}, Player: {player_index}, ID Count: {idCount}')
-    start_new_thread(threaded_client, (conn, player_index, gameID, client_id))
+    start_new_thread(threaded_client, (conn, player_index, gameID))
