@@ -21,6 +21,7 @@ s.listen(2)
 print("Waiting for a connection, Server Started")
 
 connected_clients = {}
+connected = set()
 games = {}
 idCount = 0
 
