@@ -64,7 +64,7 @@ def main(n):
 
     while run:
         # Fetch the latest game state from the server
-        game_data = n.send((game, p_index))
+        game_data = n.getP()
         game = game_data[0]  # Update the game object
         p_index = game_data[1]  # Update the player index
         
@@ -82,6 +82,7 @@ def main(n):
             redrawWindow(screen, game)
         else:
             drawWaitingWindow(screen)
+        n.send((game, p_index))
 
 if __name__ == "__main__":
     n = Network()

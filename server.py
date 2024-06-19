@@ -1,5 +1,3 @@
-# server.py
-
 from dotenv import load_dotenv
 import socket
 from _thread import *
@@ -28,10 +26,10 @@ idCount = 0
 
 def threaded_client(conn, player_index, game_index, client_id):
     print(f'Thread started for Player {player_index} in Game {game_index}')
-    conn.send(pickle.dumps((games[game_index], player_index)))
-    while True:
-        try:
-            data = conn.recv(8192)
+    try:
+        conn.sendall(pickle.dumps((games[game_index], player_index)))
+        while True:
+            data = conn.recv(4096)
             if not data:
                 print(f"No data received from Player {player_index}. Client might have disconnected.")
                 break
@@ -43,13 +41,16 @@ def threaded_client(conn, player_index, game_index, client_id):
             for client_conn, _ in connected_clients.values():
                 client_conn.sendall(pickle.dumps((games[game_index], player_index)))
 
-        except Exception as e:
-            print(f"Error: {e}")
-            break
-
-    print(f"Lost connection from Player {player_index}")
-    del connected_clients[client_id]
-    conn.close()
+    except pickle.UnpicklingError as e:
+        print(f"Error unpickling data: {e}")
+    except socket.error as e:
+        print(f"Socket error occurred: {e}")
+    except Exception as e:
+        print(f"Error in thread for Player {player_index}: {e}")
+    finally:
+        print(f"Lost connection from Player {player_index}")
+        del connected_clients[client_id]
+        conn.close()
 
 while True:
     conn, addr = s.accept()
@@ -66,7 +67,7 @@ while True:
     gameID = (idCount - 1) // 2
 
     if idCount % 2 == 1:
-        games[gameID] = Game(gameID)
+        games[gameID] = Game(gameID)  # Ensure Game objects are properly initialized and pickleable
         print('Creating a new game...')
     else:
         player_index = 1
