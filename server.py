@@ -37,7 +37,6 @@ def threaded_client(conn, player_index, game_index):
 
             game_data = pickle.loads(data)
             games[game_index] = game_data[0]
-
             conn.sendall(pickle.dumps((games[game_index], player_index)))
     except pickle.UnpicklingError as e:
         print(f"Error unpickling data: {e}")
