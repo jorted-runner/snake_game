@@ -8,24 +8,26 @@ screen = pg.display.set_mode([WINDOW_SIZE] * 2)
 clock = pg.time.Clock()
 pg.display.set_caption('client')
 
+def drawWaitingWindow(screen):
+    screen.fill('black')
+    font = pg.font.SysFont('comicsans', 60)
+    text = font.render('Waiting for player', 1, (255, 0, 0), True)
+    screen.blit(text, (WINDOW_SIZE / 2 - text.get_width() / 2, WINDOW_SIZE / 2 - text.get_height() / 2))
+    pg.display.update()
+
 def redrawWindow(screen, game):
     screen.fill('black')
-    if not game.connected():
-        font = pg.font.SysFont('comicsans', 60)
-        text = font.render('Waiting for player', 1, (255, 0, 0), True)
-        screen.blit(text, (WINDOW_SIZE / 2 - text.get_width() / 2, WINDOW_SIZE / 2 - text.get_height() / 2))
-    else:
-        game.draw_score(screen)
-        for player in game.snakes:
-            player.draw_portal(screen)
-            player.draw(screen)
-            time_now = pg.time.get_ticks()
-            if time_now - player.time > player.time_step:
-                player.time = time_now
-                player.move()
-            game.check_food(player)
-        game.check_portal()
-        game.food.draw_food(screen)
+    game.draw_score(screen)
+    for player in game.snakes:
+        player.draw_portal(screen)
+        player.draw(screen)
+        time_now = pg.time.get_ticks()
+        if time_now - player.time > player.time_step:
+            player.time = time_now
+            player.move()
+        game.check_food(player)
+    game.check_portal()
+    game.food.draw_food(screen)
     pg.display.update()
 
 def menu_screen():
@@ -56,7 +58,7 @@ def main():
     game = game_data[0]  # Extract the game object
     p_index = game_data[1]  # Extract the player index
     clock = pg.time.Clock()
-    game.snakes[p_index].mark_ready()
+    game.mark_ready(p_index)
     n.send((game, p_index))  # Notify the server that this player is ready
 
     while run:
@@ -77,7 +79,7 @@ def main():
             redrawWindow(screen, game)
             n.send((game, p_index))
         else:
-            redrawWindow(screen, game)
+            drawWaitingWindow(screen)
 
 if __name__ == "__main__":
     while True:

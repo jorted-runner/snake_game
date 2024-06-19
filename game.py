@@ -82,6 +82,10 @@ class Game:
                 if segment.center == p1_head_pos or segment.center == p2_head_pos or p2_head_pos == p1_head_pos:
                     self.game_over()
 
+    def mark_ready(self, p_index):
+        print(p_index)
+        self.snakes[p_index].mark_ready()
+
     def reset(self):
         print("Resetting game...")
         self.__init__(self.id)
