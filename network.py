@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 import socket
-from _thread import *
 import os
 import pickle
 
@@ -20,13 +19,32 @@ class Network:
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return pickle.loads(self.client.recv(2048))
-        except:
-            pass
+            return self.receive_data()
+        except Exception as e:
+            print(f"Error connecting to server: {e}")
+            return None  # or handle the error according to your application's logic
 
     def send(self, data):
         try:
             self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(2048))
+            return self.receive_data()
         except socket.error as e:
-            print(e)
+            print(f"Socket error occurred: {e}")
+            return None  # or handle the error according to your application's logic
+        except pickle.UnpicklingError as e:
+            print(f"Error unpickling data: {e}")
+            return None  # or handle the error according to your application's logic
+        except Exception as e:
+            print(f"Unknown error occurred: {e}")
+            return None  # or handle the error according to your application's logic
+
+    def receive_data(self):
+        try:
+            data = pickle.loads(self.client.recv(4096))
+            return data
+        except pickle.UnpicklingError as e:
+            print(f"Error unpickling received data: {e}")
+            return None  # or handle the error according to your application's logic
+        except Exception as e:
+            print(f"Error receiving data: {e}")
+            return None  # or handle the error according to your application's logic
