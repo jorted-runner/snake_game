@@ -83,7 +83,6 @@ class Game:
                     self.game_over()
 
     def mark_ready(self, p_index):
-        print(p_index)
         self.snakes[p_index].mark_ready()
 
     def reset(self):

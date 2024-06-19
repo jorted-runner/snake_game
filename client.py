@@ -1,3 +1,5 @@
+# client.py
+
 from network import Network
 import pygame as pg
 
@@ -30,7 +32,7 @@ def redrawWindow(screen, game):
     game.food.draw_food(screen)
     pg.display.update()
 
-def menu_screen():
+def menu_screen(n):
     if not pg.font.get_init():
         pg.font.init()
     run = True
@@ -49,11 +51,10 @@ def menu_screen():
                 run = False
             elif event.type == pg.MOUSEBUTTONDOWN:
                 run = False
-    main()
+    main(n)
 
-def main():
+def main(n):
     run = True
-    n = Network()
     game_data = n.getP()
     game = game_data[0]  # Extract the game object
     p_index = game_data[1]  # Extract the player index
@@ -62,9 +63,11 @@ def main():
     n.send((game, p_index))  # Notify the server that this player is ready
 
     while run:
-        game_data = n.getP()
+        # Fetch the latest game state from the server
+        game_data = n.send((game, p_index))
         game = game_data[0]  # Update the game object
         p_index = game_data[1]  # Update the player index
+        
         if game.connected():  # Ensure both players are ready
             clock.tick(60)
             for event in pg.event.get():
@@ -77,10 +80,9 @@ def main():
             game.check_borders()
             game.check_self_eating()
             redrawWindow(screen, game)
-            n.send((game, p_index))
         else:
             drawWaitingWindow(screen)
 
 if __name__ == "__main__":
-    while True:
-        menu_screen()
+    n = Network()
+    menu_screen(n)
