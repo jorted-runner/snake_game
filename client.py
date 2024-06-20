@@ -19,6 +19,11 @@ def drawWaitingWindow(screen):
 
 def redrawWindow(screen, game):
     screen.fill('black')
+    # if not(game.connected()):
+    #     font = pg.font.SysFont('comicsans', 60)
+    #     text = font.render('Waiting for player', 1, (255,0,0), True)
+    #     screen.blit(text, (WINDOW_SIZE/2 - text.get_width()/2, WINDOW_SIZE/2 - text.get_height()/2))
+    # else:
     game.draw_score(screen)
     for player in game.snakes:
         player.draw_portal(screen)
