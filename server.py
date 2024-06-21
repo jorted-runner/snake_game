@@ -28,16 +28,17 @@ games = {}
 idCount = 0
 
 def threaded_client(conn, player_index, game_index):
-    conn.send(pickle.dumps((games[game_index], player_index)))
-    reply = ""
+    games[game_index]['connections'].append(conn)
+    conn.send(pickle.dumps((games[game_index]['game'], player_index)))
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
+            games[game_index]['game'] = data[0]
             if not data:
                 print("Disconnected")
                 break
-            reply = (games[game_index], player_index)
-            conn.sendall(pickle.dumps(reply))
+            for connection in games[game_index]['connections']:
+                connection.sendall(pickle.dumps((games[game_index]['game'], None)))
 
         except Exception as e:
             print(f"Error: {e}")
@@ -57,7 +58,7 @@ while True:
 
     gameID = (idCount - 1) // 2
     if idCount % 2 == 1:
-        games[gameID] = Game(gameID)
+        games[gameID] = {'game': Game(gameID), 'connections': []}
         print('Creating a new game...')
     else:
         p = 1

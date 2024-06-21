@@ -8,7 +8,7 @@ screen = pg.display.set_mode([WINDOW_SIZE] * 2)
 clock = pg.time.Clock()
 pg.display.set_caption('client')
                 
-def redrawWindow(screen, game):
+def redrawWindow(screen, game, p_index, n):
     screen.fill('black')
     # if not(game.connected()):
     #     font = pg.font.SysFont('comicsans', 60)
@@ -26,6 +26,7 @@ def redrawWindow(screen, game):
         game.check_food(player)
     game.check_portal()
     game.food.draw_food(screen)
+    n.send((game, p_index))
     pg.display.update()
 
 def menu_screen():
@@ -61,7 +62,6 @@ def main():
     while run:
         data = n.getP()
         game = data[0]
-        p_index = data[1]
         clock.tick(60)
 
         for event in pg.event.get():
@@ -73,8 +73,7 @@ def main():
 
         game.check_borders()
         game.check_self_eating()
-        redrawWindow(screen, game)
-        n.send((game, p_index))
+        redrawWindow(screen, game, p_index, n)
 
 
 if __name__ == "__main__":
