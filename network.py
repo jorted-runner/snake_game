@@ -19,15 +19,15 @@ class Network:
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return self.receive_data()
+            return pickle.loads(self.client.recv(2048 * 4))
         except Exception as e:
             print(f"Error connecting to server: {e}")
             return None  # or handle the error according to your application's logic
-
+          
     def send(self, data):
         try:
             self.client.send(pickle.dumps(data))
-            return self.receive_data()
+            return pickle.loads(self.client.recv(2048 * 4))
         except socket.error as e:
             print(f"Socket error occurred: {e}")
             return None  # or handle the error according to your application's logic
