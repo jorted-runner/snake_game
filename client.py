@@ -64,15 +64,15 @@ def main(n):
         # Fetch the latest game state from the server
         game_data = n.getP()
         game = game_data[0]  # Update the game object
-      
-        if game.connected():  # Ensure both players are ready
-            clock.tick(60)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    run = False
-                    pg.quit()
-                game.snakes[p_index].control(event)
-                game.snakes[p_index].place_portal(event)
+
+        clock.tick(60)
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                run = False
+                pg.quit()
+            print(p_index)
+            game.snakes[p_index].control(event)
+            game.snakes[p_index].place_portal(event)
 
         game.check_borders()
         game.check_self_eating()

@@ -29,6 +29,7 @@ idCount = 0
 
 def threaded_client(conn, player_index, game_index):
     games[game_index]['connections'].append(conn)
+    print(player_index)
     conn.send(pickle.dumps((games[game_index]['game'], player_index)))
     while True:
         try:
