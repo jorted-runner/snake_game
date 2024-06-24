@@ -85,7 +85,16 @@ class Game:
                 if segment.center == p1_head_pos or segment.center == p2_head_pos or p2_head_pos == p1_head_pos:
                     self.game_over()
 
-    def update(self):
+    def update(self, screen):
+        print(self.snakes)
+        for player in self.snakes:
+            player.draw_portal(screen)
+            player.draw(screen)
+            time_now = pygame.time.get_ticks()
+            if time_now - player.time > player.time_step:
+                player.time = time_now
+                # player.move()
+        self.food.draw_food(screen)
         self.check_borders()
         # self.check_self_eating
 

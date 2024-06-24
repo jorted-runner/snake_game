@@ -13,21 +13,8 @@ pg.display.set_caption('client')
                 
 def redrawWindow(screen, game, player, n):
     screen.fill('black')
-    # if not(game.connected()):
-    #     font = pg.font.SysFont('comicsans', 60)
-    #     text = font.render('Waiting for player', 1, (255,0,0), True)
-    #     screen.blit(text, (WINDOW_SIZE/2 - text.get_width()/2, WINDOW_SIZE/2 - text.get_height()/2))
-    # else:
-    game.draw_score(screen)
-    player.draw_portal(screen)
-    player.draw(screen)
-    time_now = pg.time.get_ticks()
-    if time_now - player.time > player.time_step:
-        player.time = time_now
-        player.move()
+    game.update(screen)
     game.check_food(player)
-    # game.check_portal()
-    game.food.draw_food(screen)
     n.send((game, player))
     pg.display.update()
 
@@ -68,7 +55,6 @@ def main(n):
         # Fetch the latest game state from the server
         game_data = n.getP()
         game = game_data[0]  # Update the game object
-      
         # if game.connected():  # Ensure both players are ready
         clock.tick(60)
         for event in pg.event.get():

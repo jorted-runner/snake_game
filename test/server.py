@@ -41,7 +41,7 @@ def threaded_client(conn, p_index, game_index):
             if not data:
                 print("Disconnected")
                 break
-            games[game_index]['game'].update()
+            conn.sendall(pickle.dumps((games[game_index]['game'], data[1])))
             for connection in games[game_index]['connections']:
                 connection.sendall(pickle.dumps((games[game_index]['game'], None)))
 
