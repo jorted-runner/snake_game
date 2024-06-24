@@ -34,13 +34,14 @@ def threaded_client(conn, p_index, game_index):
         try:
             data = pickle.loads(conn.recv(2048))
             games[game_index]['game'] = data[0]
-            if games[game_index]['game'].snakes[p_index]:
+            if games[game_index]['game'].snakes:
                 games[game_index]['game'].snakes[p_index] = data[1]
             else:
                 games[game_index]['game'].snakes.append(data[1])
             if not data:
                 print("Disconnected")
                 break
+            games[game_index]['game'].update()
             for connection in games[game_index]['connections']:
                 connection.sendall(pickle.dumps((games[game_index]['game'], None)))
 

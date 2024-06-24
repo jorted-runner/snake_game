@@ -7,8 +7,9 @@ class Player:
         self.time = 0
         self.time_step = 250
         self.segments = []
+        self.pos = pos
         self.color = color
-        self.create_snake(pos)
+        self.create_snake(self.pos)
         self.head = self.segments[0]
         self.direction = 'DOWN'
         self.portal = {
@@ -73,3 +74,6 @@ class Player:
 
     def mark_ready(self):
         self.ready = True
+
+    def reset(self):
+        self.__init__(self.pos, self.color, self.player_index)

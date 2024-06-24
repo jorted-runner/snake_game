@@ -85,14 +85,16 @@ class Game:
                 if segment.center == p1_head_pos or segment.center == p2_head_pos or p2_head_pos == p1_head_pos:
                     self.game_over()
 
-    def update(self, snakes):
-        self.check_borders(snakes)
+    def update(self):
+        self.check_borders()
+        # self.check_self_eating
 
     def reset(self):
         print("Resetting game...")
-        self.__init__(self.id)
         for snake in self.snakes:
-            snake.ready = False
+            snake.reset()
+        self.__init__(self.id)
+        
 
     def game_over(self):
         print("Game over!")

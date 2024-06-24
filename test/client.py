@@ -63,7 +63,7 @@ def main(n):
         player = Player([(500, 100), (500, 80), (500, 60)], 'purple', p_index)
     clock = pg.time.Clock()
     player.mark_ready()
-    n.send((game, p_index))  # Notify the server that this player is ready
+    n.send((game, player))  # Notify the server that this player is ready
     while run:
         # Fetch the latest game state from the server
         game_data = n.getP()
