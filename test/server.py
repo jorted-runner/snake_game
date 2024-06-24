@@ -29,21 +29,18 @@ idCount = 0
 
 def threaded_client(conn, p_index, game_index):
     games[game_index]['connections'].append(conn)
+    print(f'1st Sending: {games[game_index]["game"]}, {p_index}')
     conn.send(pickle.dumps((games[game_index]['game'], p_index)))
     while True:
         try:
-            data = pickle.loads(conn.recv(2048))
+            data = pickle.loads(conn.recv(2048*2))
+            print(f'Received: {data[0]}, {data[1]}')
             games[game_index]['game'] = data[0]
-            if games[game_index]['game'].snakes:
-                games[game_index]['game'].snakes[p_index] = data[1]
-            else:
-                games[game_index]['game'].snakes.append(data[1])
-            if not data:
-                print("Disconnected")
-                break
-            conn.sendall(pickle.dumps((games[game_index]['game'], data[1])))
-            for connection in games[game_index]['connections']:
-                connection.sendall(pickle.dumps((games[game_index]['game'], None)))
+            games[game_index]['game'].connect(data[1], p_index)
+            print(games[game_index]['game'].snakes)
+            print(f'2nd Sending: {games[game_index]["game"]}, {games[game_index]["game"].snakes[p_index]}')
+
+            conn.sendall(pickle.dumps((games[game_index]['game'], games[game_index]["game"].snakes[p_index])))
 
         except Exception as e:
             print(f"Error: {e}")

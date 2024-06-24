@@ -42,6 +42,8 @@ def menu_screen(n):
 def main(n):
     run = True
     game_data = n.getP()
+    print(f'1st Receive: {game_data[0]}, {game_data[1]}')
+
     game = game_data[0]  # Extract the game object
     p_index = game_data[1]  # Extract the player index
     if p_index > 0:
@@ -49,23 +51,14 @@ def main(n):
     else:
         player = Player([(500, 100), (500, 80), (500, 60)], 'purple', p_index)
     clock = pg.time.Clock()
-    player.mark_ready()
+    print(f'Sending: {game}, {player}')
     n.send((game, player))  # Notify the server that this player is ready
     while run:
-        # Fetch the latest game state from the server
-        game_data = n.getP()
-        game = game_data[0]  # Update the game object
-        # if game.connected():  # Ensure both players are ready
-        clock.tick(60)
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                run = False
-                pg.quit()
-            player.control(event)
-            player.place_portal(event)
-        # game.check_borders()
-        # game.check_self_eating()
-        redrawWindow(screen, game, player, n)
+        updated_data = n.getP()
+        print(f'2nd Receive: {updated_data} | {updated_data[0]}, {updated_data[1]}')
+        run = False
+
+
 
 if __name__ == "__main__":
     n = Network()

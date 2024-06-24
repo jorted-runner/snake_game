@@ -8,7 +8,7 @@ class Game:
     def __init__(self, id):
         self.id = id
         self.score = 0
-        self.snakes = []
+        self.snakes = {}
         self.win_width = 600
         self.win_height = 600
         self.tile_size = 20
@@ -62,9 +62,10 @@ class Game:
         text = font.render(f"Score {self.score}", True, (255, 255, 255))
         screen.blit(text, (10, 10))
 
-    def connect(self, snake):
-        self.snakes.append(snake)
-        snake.mark_ready()
+    def connect(self, snake, p_index):
+        if not snake.ready:
+            self.snakes[p_index] = snake
+            self.snakes[p_index].mark_ready()
 
     def connected(self):
         if len(self.snakes) >= 2:
@@ -86,7 +87,6 @@ class Game:
                     self.game_over()
 
     def update(self, screen):
-        print(self.snakes)
         for player in self.snakes:
             player.draw_portal(screen)
             player.draw(screen)
